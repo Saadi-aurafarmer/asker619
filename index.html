@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Be My Valentine?</title>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Fredoka:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fredoka:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
     <style>
-        /* --- General Styling --- */
         body {
             margin: 0;
             padding: 0;
@@ -14,25 +13,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
             background-color: #ffdde1; 
             font-family: 'Fredoka', sans-serif;
             overflow: hidden;
             flex-direction: column;
+            touch-action: manipulation;
         }
 
         .container {
             text-align: center;
-            position: relative;
+            width: 90%;
+            max-width: 400px;
             z-index: 10;
-            transition: opacity 0.5s;
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
-        /* --- Images --- */
         .gif-container img {
             width: 200px;
             border-radius: 15px;
@@ -40,25 +36,18 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
-        /* --- Typography --- */
         h1 {
             color: #ff4d6d;
             font-family: 'Pacifico', cursive;
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 10px;
             text-shadow: 2px 2px 0px #fff;
         }
 
-        p {
-            color: #590d22;
-            font-size: 1.2rem;
-        }
-
-        /* --- Buttons --- */
         .btn-group {
             margin-top: 20px;
             position: relative;
-            height: 60px; 
+            height: 100px; 
         }
 
         button {
@@ -67,45 +56,20 @@
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            font-family: 'Fredoka', sans-serif;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin: 0 10px;
+            font-weight: 600;
         }
 
-        .btn-yes {
-            background-color: #ff4d6d;
-            color: white;
-            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
-        }
-
-        .btn-yes:hover {
-            transform: scale(1.1);
-            background-color: #ff758f;
-        }
-
+        .btn-yes { background-color: #ff4d6d; color: white; }
         .btn-no {
             background-color: #fff;
             color: #ff4d6d;
             border: 2px solid #ff4d6d;
-            position: absolute; 
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        .next-arrow {
-            font-size: 3rem;
-            color: #ff4d6d;
-            cursor: pointer;
-            margin-top: 30px;
-            animation: bounce 2s infinite;
-            display: inline-block;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateX(0);}
-            40% {transform: translateX(10px);}
-            60% {transform: translateX(5px);}
-        }
-
-        /* --- ENVELOPE STYLES --- */
+        /* --- ENVELOPE SYSTEM --- */
         .envelope-wrapper {
             background: #f7d794;
             width: 300px;
@@ -113,9 +77,8 @@
             position: relative;
             margin: 50px auto;
             border-radius: 5px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             cursor: pointer;
-            transition: transform 0.3s;
         }
 
         .envelope-flap {
@@ -128,82 +91,42 @@
             border-right: 150px solid transparent;
             border-top: 110px solid #f3cba8;
             transform-origin: top;
-            transition: transform 0.4s ease-in-out, z-index 0.4s;
+            transition: transform 0.5s ease;
             z-index: 5;
         }
 
         .envelope-paper {
             position: absolute;
-            bottom: 0;
-            left: 20px;
-            width: 260px;
-            height: 180px;
+            bottom: 5px;
+            left: 15px;
+            width: 270px;
+            height: 170px;
             background: white;
-            padding: 30px;
+            padding: 20px;
             box-sizing: border-box;
-            transition: all 0.8s ease-in-out;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: left;
-            
-            /* --- FONT CHANGE HERE --- */
-            font-family: 'Caveat', cursive; 
-            font-weight: 700; /* Makes it a bit bolder/readable */
-            font-size: 1.8rem; /* Larger text */
-            line-height: 1.5; /* Better spacing */
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            z-index: 2;
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
             color: #444;
-            
             overflow: hidden;
         }
 
-        /* The expanded state for the paper */
+        /* Full Size Zoom Effect */
         .envelope-paper.full-size {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) !important;
-            width: 90vw;          
-            max-width: 600px;     
-            height: 85vh;         
-            z-index: 1000;        
-            border-radius: 10px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.3);
-            overflow-y: auto;     
-        }
-
-        .envelope-front {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 150px solid #f7d794;
-            border-right: 150px solid #f7d794;
-            border-bottom: 100px solid #e1b12c;
-            z-index: 4;
-            pointer-events: none;
-        }
-        
-        .envelope-left {
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-top: 100px solid transparent;
-            border-bottom: 100px solid transparent;
-            border-left: 150px solid #f5cd79;
-            z-index: 3;
-        }
-        
-        .envelope-right {
-             position: absolute;
-            top: 0;
-            right: 0;
-            border-top: 100px solid transparent;
-            border-bottom: 100px solid transparent;
-            border-right: 150px solid #f5cd79;
-            z-index: 3;
+            width: 90vw;
+            max-width: 500px;
+            height: 80vh;
+            z-index: 1000;
+            padding: 40px 25px;
+            font-size: 1.6rem;
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.2);
+            overflow-y: auto;
         }
 
         .envelope-wrapper.open .envelope-flap {
@@ -211,39 +134,38 @@
             z-index: 1;
         }
 
-        /* --- Hearts --- */
+        /* Visual elements to make it look like a real envelope */
+        .envelope-front {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border-left: 150px solid #f7d794;
+            border-right: 150px solid #f7d794;
+            border-bottom: 110px solid #e1b12c;
+            box-sizing: border-box;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        /* --- HEARTS (Performance Optimized) --- */
         .heart {
             position: absolute;
             color: #ff4d6d;
-            animation: floatUp 4s linear forwards;
             font-size: 20px;
             z-index: 0;
+            pointer-events: none;
+            will-change: transform;
+            animation: floatUp 3.5s linear forwards;
         }
 
         @keyframes floatUp {
-            to {
-                transform: translateY(-100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        .close-letter {
-            display: none;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #ff4d6d;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            font-family: 'Fredoka', sans-serif;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        
-        .full-size .close-letter {
-            display: inline-block; 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
         }
 
+        .next-arrow { font-size: 3rem; color: #ff4d6d; margin-top: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -256,7 +178,7 @@
         <p>Please? 🍫</p>
         <div class="btn-group">
             <button class="btn-yes" onclick="celebrate()">YES</button>
-            <button class="btn-no" id="noBtn" onmouseover="moveButton()">NO</button>
+            <button class="btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
         </div>
     </div>
 
@@ -265,18 +187,14 @@
         <div class="gif-container">
             <img src="giphy.gif" alt="Happy Cat">
         </div>
-        <p>Click the arrow to read my message...</p>
         <div class="next-arrow" onclick="goToLetter()">➜</div>
     </div>
 
     <div class="container hidden" id="letter-container">
-        <h1 style="font-size: 2rem;">A message for you...</h1>
-        <p>(Tap the envelope)</p>
-        
+        <h1>A message for you...</h1>
         <div class="envelope-wrapper" onclick="openEnvelope()">
             <div class="envelope-flap"></div>
             <div class="envelope-paper" id="note-paper">
-                
                 <p>Mi Amor,</p>
                 <p>
                     Well u alr know that i like u, as for why? well thats honestly bc ur different from everyone like in a no bullshit manner yk, like u say shi how it is and i admire that alot, even ur personality i find it hella attractive yk ik that u might not believe me in ts but ts is the truth niggi, also have i mentioned ur yaps? I LOVE THEM SMMMMM ydk how much i be wanting to hear u yap especially throught vms or on call bc simply i love ur voice, its sooo attractive, like soo cute and soothing yk even ur accent lmaooooo I LOVE IT its so unique and amazing, and another thing ur eyes, like DAMN ur eyes they so beautiful bruhh and i shouldnt be shocked by ts bc u urself are hella beautiful. If i ever made u annoyed, pissed or angry at me then im truly sorry for that bc i can be sorta dumb sometimes and i may or may not have been jealous once of twice lmaooo. But im soooo damn grateful to have u in my life and i hope we can be together for a long time, like forever tbh lol, pls never stop being in my life chat
@@ -286,38 +204,37 @@
                     Love,<br>
                     Apka Humble Slave
                 </p>
-                <button class="close-letter" onclick="closePaper(event)">Close Note</button>
+                <button onclick="closePaper(event)" style="background: #ff4d6d; color: white; border: none; padding: 10px; border-radius: 20px; width: 100%; margin-top: 20px; cursor: pointer; font-family: 'Fredoka';">Close Note</button>
             </div>
             <div class="envelope-front"></div>
-            <div class="envelope-left"></div>
-            <div class="envelope-right"></div>
         </div>
     </div>
 
     <script>
+        let heartInterval;
         function moveButton() {
-            const noBtn = document.getElementById('noBtn');
+            const btn = document.getElementById('noBtn');
             const x = Math.random() * (window.innerWidth - 150);
             const y = Math.random() * (window.innerHeight - 150);
-            noBtn.style.left = `${x}px`;
-            noBtn.style.top = `${y}px`;
+            btn.style.left = `${x}px`;
+            btn.style.top = `${y}px`;
+            btn.style.transform = 'none';
         }
 
         function celebrate() {
             document.getElementById('question-container').classList.add('hidden');
             document.getElementById('success-container').classList.remove('hidden');
-            setInterval(createHeart, 200);
+            // Hearts are slightly spaced out to prevent lag
+            heartInterval = setInterval(createHeart, 300);
         }
 
         function createHeart() {
             const heart = document.createElement('div');
-            heart.classList.add('heart');
+            heart.className = 'heart';
             heart.innerHTML = '❤️';
             heart.style.left = Math.random() * 100 + "vw";
-            heart.style.fontSize = Math.random() * 20 + 20 + "px";
-            heart.style.animationDuration = Math.random() * 2 + 3 + "s";
             document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 5000);
+            setTimeout(() => { heart.remove(); }, 3500);
         }
 
         function goToLetter() {
@@ -331,17 +248,17 @@
             envelope.classList.add('open');
             setTimeout(() => {
                 paper.classList.add('full-size');
-            }, 500);
+            }, 600);
         }
 
-        function closePaper(event) {
-            event.stopPropagation(); 
+        function closePaper(e) {
+            e.stopPropagation();
             const paper = document.getElementById('note-paper');
             const envelope = document.querySelector('.envelope-wrapper');
             paper.classList.remove('full-size');
             setTimeout(() => {
                 envelope.classList.remove('open');
-            }, 800);
+            }, 700);
         }
     </script>
 </body>
