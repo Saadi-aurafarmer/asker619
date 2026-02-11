@@ -30,24 +30,40 @@
         .hidden { display: none !important; }
 
         .gif-container img {
-            width: 200px;
+            width: 250px;
             border-radius: 15px;
             margin-bottom: 20px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
+        /* Fixed the 350% error to 350px */
+        #cookies-gif {
+            width: 350px !important; 
+            max-width: 90vw;
+            border-radius: 15px;
+        }
+
         h1 {
             color: #ff4d6d;
             font-family: 'Pacifico', cursive;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 10px;
             text-shadow: 2px 2px 0px #fff;
+        }
+
+        .big-text h1 {
+            font-size: 2.8rem;
+            line-height: 1.2;
         }
 
         .btn-group {
             margin-top: 20px;
             position: relative;
             height: 100px; 
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
 
         button {
@@ -64,12 +80,19 @@
             background-color: #fff;
             color: #ff4d6d;
             border: 2px solid #ff4d6d;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
         }
 
-        /* --- ENVELOPE SYSTEM --- */
+        #game-canvas {
+            background: #fffafa;
+            border: 4px solid #ff4d6d;
+            border-radius: 15px;
+            display: block;
+            margin: 0 auto;
+            touch-action: none;
+            max-width: 100%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
         .envelope-wrapper {
             background: #f7d794;
             width: 300px;
@@ -110,9 +133,9 @@
             font-size: 1.2rem;
             color: #444;
             overflow: hidden;
+            text-align: left;
         }
 
-        /* Full Size Zoom Effect */
         .envelope-paper.full-size {
             position: fixed;
             top: 50%;
@@ -134,13 +157,11 @@
             z-index: 1;
         }
 
-        /* Visual elements to make it look like a real envelope */
         .envelope-front {
             position: absolute;
             bottom: 0;
             width: 100%;
             height: 100%;
-            background: transparent;
             border-left: 150px solid #f7d794;
             border-right: 150px solid #f7d794;
             border-bottom: 110px solid #e1b12c;
@@ -149,7 +170,6 @@
             pointer-events: none;
         }
 
-        /* --- HEARTS (Performance Optimized) --- */
         .heart {
             position: absolute;
             color: #ff4d6d;
@@ -165,7 +185,7 @@
             100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
         }
 
-        .next-arrow { font-size: 3rem; color: #ff4d6d; margin-top: 20px; cursor: pointer; }
+        .next-arrow { font-size: 4rem; color: #ff4d6d; margin-top: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -175,10 +195,10 @@
             <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGIwZGE1N2YyN2M4NzY1ZGI1YjI4YjI5YjI5YjI5YjI5YjI5YSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/3oriO0OEd9QIDdllqo/giphy.gif" alt="Cute Cat">
         </div>
         <h1>Will you be my Valentine?</h1>
-        <p>Please? 🍫</p>
+        <p>Pleaseee?? ☹🍫</p>
         <div class="btn-group">
-            <button class="btn-yes" onclick="celebrate()">YES</button>
-            <button class="btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
+            <button class="btn-yes" onclick="startMinigame()">YES</button>
+            <button class="btn-no" id="noBtn" onclick="handleNo()">NO</button>
         </div>
     </div>
 
@@ -187,6 +207,34 @@
         <div class="gif-container">
             <img src="giphy.gif" alt="Happy Cat">
         </div>
+        <div class="next-arrow" onclick="showGame()">➜</div>
+    </div>
+
+    <div class="container hidden" id="game-container">
+        <h1>Catch 10 Cookies! 🍪</h1>
+        <canvas id="game-canvas" width="340" height="500"></canvas>
+    </div>
+
+    <div class="container hidden big-text" id="game-success-container">
+        <h1>well done gayrina u got ur choco lavas</h1>
+        <div class="next-arrow" onclick="triggerTease()">➜</div>
+    </div>
+
+    <div class="container hidden big-text" id="tease-container">
+        <h1>oh we aint done niggi</h1>
+        <div class="next-arrow" onclick="goToThief()">➜</div>
+    </div>
+
+    <div class="container hidden" id="thief-container">
+        <div class="gif-container">
+            <img id="cookies-gif" src="cookies.gif" alt="cooookiessss">
+        </div>
+        <h1 style="font-size: 1.8rem;">HEHEHEHE ate all ur chocolava gay 😛😋</h1>
+        <div class="next-arrow" onclick="goToLastThing()">➜</div>
+    </div>
+
+    <div class="container hidden big-text" id="last-thing-container">
+        <h1>One last thing...</h1>
         <div class="next-arrow" onclick="goToLetter()">➜</div>
     </div>
 
@@ -195,15 +243,10 @@
         <div class="envelope-wrapper" onclick="openEnvelope()">
             <div class="envelope-flap"></div>
             <div class="envelope-paper" id="note-paper">
-                <p>Mi Amor,</p>
-                <p>
-                    Well u alr know that i like u and thats why im asking u to be my valentine niggerina, as for why? well thats honestly bc ur different from everyone like in a no bullshit manner yk, like u say shi how it is and i admire that alot, even ur personality i find it hella attractive yk ik that u might not believe me in ts but ts is the truth niggi, ik ive said ts before but bruh i feel at home whenever i talk to u its satisfyingly calm, its like i can be myself around u. BRUH like honeslty ur so awesome and cool and amazing and bauni and cute and beautiful and pretty and sweet and mine hehehe, also have i mentioned ur yaps? I LOVE THEM SMMMMM ydk how much i be wanting to hear u yap especially throught vms or on call bc simply i love ur voice, its sooo attractive, like soo cute and soothing yk even ur accent lmaooooo I LOVE IT its so unique and amazing, and another thing ur eyes, like DAMN ur eyes they so beautiful bruhh and i shouldnt be shocked by ts bc u urself are hella beautiful. If i ever made u annoyed, pissed or angry at me then im truly sorry for that bc i can be sorta dumb sometimes and i may or may not have been jealous once of twice lmaooo. But im soooo damn grateful to have u in my life and i hope we can be together for a long time, like forever tbh lol, wut do u say? (pls say yes pls pls pls)
-                    <br><br>
-                    P.S. Why u so cute?
-                    <br><br>
-                    Love,<br>
-                    Apka Humble Slave
-                </p>
+                <p style="text-align: center; font-weight: bold;">Mi Amor,</p>
+                <p>Well u alr know that i like u and thats why im asking u to be my valentine niggerina, as for why? well thats honestly bc ur different from everyone like in a no bullshit manner yk, like u say shi how it is and i admire that alot, even ur personality i find it hella attractive yk ik that u might not believe me in ts but ts is the truth niggi, ik ive said ts before but bruh i feel at home whenever i talk to u its satisfyingly calm, its like i can be myself around u. BRUH like honeslty ur so awesome and cool and amazing and bauni and cute and beautiful and pretty and sweet and mine hehehe, also have i mentioned ur yaps? I LOVE THEM SMMMMM ydk how much i be wanting to hear u yap especially throught vms or on call bc simply i love ur voice, its sooo attractive, like soo cute and soothing yk even ur accent lmaooooo I LOVE IT its so unique and amazing, and another thing ur eyes, like DAMN ur eyes they so beautiful bruhh and i shouldnt be shocked by ts bc u urself are hella beautiful. If i ever made u annoyed, pissed or angry at me then im truly sorry for that bc i can be sorta dumb sometimes and i may or may not have been jealous once of twice lmaooo. But im soooo damn grateful to have u in my life and i hope we can be together for a long time, like forever tbh lol, wut do u say? (pls say yes pls pls pls)</p>
+                <p style="text-align: center; font-weight: bold;">P.S. Why u so cute?</p>
+                <p style="text-align: center; font-weight: bold;">Love,<br>Apka Humble Slave</p>
                 <button onclick="closePaper(event)" style="background: #ff4d6d; color: white; border: none; padding: 10px; border-radius: 20px; width: 100%; margin-top: 20px; cursor: pointer; font-family: 'Fredoka';">Close Note</button>
             </div>
             <div class="envelope-front"></div>
@@ -211,21 +254,110 @@
     </div>
 
     <script>
-        let heartInterval;
-        function moveButton() {
-            const btn = document.getElementById('noBtn');
-            const x = Math.random() * (window.innerWidth - 150);
-            const y = Math.random() * (window.innerHeight - 150);
-            btn.style.left = `${x}px`;
-            btn.style.top = `${y}px`;
-            btn.style.transform = 'none';
+        let noCount = 0;
+        let heartInterval; // Defined globally
+
+        function handleNo() {
+            noCount++;
+            const noBtn = document.getElementById('noBtn');
+            if (noCount === 1) alert("Oh shiiiiii guessed someone hacked the no button, rip :( guess ur only option is to say yes");
+            else if (noCount === 2) alert("Sorry ts button is under maintenance pls try again later");
+            else if (noCount === 3) alert("Ts button has died, pls select yes");
+            else if (noCount >= 4) { alert("Damn gurl i alr told u i died"); noBtn.style.display = 'none'; }
         }
 
-        function celebrate() {
+        /* --- NAVIGATION FLOW --- */
+        function startMinigame() {
             document.getElementById('question-container').classList.add('hidden');
             document.getElementById('success-container').classList.remove('hidden');
-            // Hearts are slightly spaced out to prevent lag
             heartInterval = setInterval(createHeart, 300);
+        }
+
+        function showGame() {
+            document.getElementById('success-container').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            gameActive = true;
+            spawnCookie();
+            requestAnimationFrame(gameLoop);
+        }
+
+        /* --- MINIGAME LOGIC --- */
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        let score = 0;
+        let basketX = 145; 
+        let cookies = [];
+        let gameActive = false;
+
+        function updateBasketPos(clientX) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            let newX = (clientX - rect.left) * scaleX - 25;
+            if(newX < 0) newX = 0;
+            if(newX > canvas.width - 50) newX = canvas.width - 50;
+            basketX = newX;
+        }
+
+        window.addEventListener('mousemove', (e) => { if(gameActive) updateBasketPos(e.clientX); });
+        window.addEventListener('touchmove', (e) => { if(gameActive) updateBasketPos(e.touches[0].clientX); }, { passive: true });
+
+        function spawnCookie() {
+            if (!gameActive) return;
+            cookies.push({ x: Math.random() * (canvas.width - 30), y: 0, speed: 3 + Math.random() * 2 });
+            setTimeout(spawnCookie, 800); 
+        }
+
+        function gameLoop() {
+            if (!gameActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ff4d6d";
+            ctx.fillRect(basketX, canvas.height - 40, 50, 20); 
+            ctx.font = "30px Arial";
+            for (let i = 0; i < cookies.length; i++) {
+                let c = cookies[i];
+                c.y += c.speed;
+                ctx.fillText("🍪", c.x, c.y);
+                let basketY = canvas.height - 40;
+                if (c.y > basketY - 10 && c.y < basketY + 30 && c.x > basketX - 15 && c.x < basketX + 50) {
+                    cookies.splice(i, 1);
+                    score++;
+                    i--;
+                    if (score >= 10) endGame();
+                } else if (c.y > canvas.height) {
+                    cookies.splice(i, 1);
+                    i--;
+                }
+            }
+            ctx.fillStyle = "#333";
+            ctx.font = "24px Fredoka";
+            ctx.fillText("Score: " + score + "/10", 15, 35);
+            requestAnimationFrame(gameLoop);
+        }
+
+        function endGame() {
+            gameActive = false;
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('game-success-container').classList.remove('hidden');
+        }
+
+        function triggerTease() {
+            document.getElementById('game-success-container').classList.add('hidden');
+            document.getElementById('tease-container').classList.remove('hidden');
+        }
+
+        function goToThief() {
+            document.getElementById('tease-container').classList.add('hidden');
+            document.getElementById('thief-container').classList.remove('hidden');
+        }
+
+        function goToLastThing() {
+            document.getElementById('thief-container').classList.add('hidden');
+            document.getElementById('last-thing-container').classList.remove('hidden');
+        }
+
+        function goToLetter() {
+            document.getElementById('last-thing-container').classList.add('hidden');
+            document.getElementById('letter-container').classList.remove('hidden');
         }
 
         function createHeart() {
@@ -237,32 +369,20 @@
             setTimeout(() => { heart.remove(); }, 3500);
         }
 
-        function goToLetter() {
-            document.getElementById('success-container').classList.add('hidden');
-            document.getElementById('letter-container').classList.remove('hidden');
-        }
-
         function openEnvelope() {
-            const envelope = document.querySelector('.envelope-wrapper');
-            const paper = document.getElementById('note-paper');
-            envelope.classList.add('open');
-            setTimeout(() => {
-                paper.classList.add('full-size');
-            }, 600);
+            document.querySelector('.envelope-wrapper').classList.add('open');
+            setTimeout(() => { document.getElementById('note-paper').classList.add('full-size'); }, 600);
         }
 
         function closePaper(e) {
             e.stopPropagation();
-            const paper = document.getElementById('note-paper');
-            const envelope = document.querySelector('.envelope-wrapper');
-            paper.classList.remove('full-size');
-            setTimeout(() => {
-                envelope.classList.remove('open');
-            }, 700);
+            document.getElementById('note-paper').classList.remove('full-size');
+            setTimeout(() => { document.querySelector('.envelope-wrapper').classList.remove('open'); }, 700);
         }
     </script>
 </body>
 </html>
+
 
 
 
